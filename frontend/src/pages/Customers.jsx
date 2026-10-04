@@ -1,3 +1,4 @@
+```jsx
 import { useEffect, useState } from "react";
 import {
   getCustomers,
@@ -7,13 +8,15 @@ import {
 const Customers = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const [showForm, setShowForm] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
-    mobile: "",
+    phone: "",
     email: "",
+    address: "",
   });
 
   const [error, setError] = useState("");
@@ -26,6 +29,7 @@ const Customers = () => {
   const loadCustomers = async () => {
     try {
       setLoading(true);
+      setError("");
 
       const response = await getCustomers();
 
@@ -33,7 +37,7 @@ const Customers = () => {
 
       setCustomers(response.data || []);
     } catch (error) {
-      console.error(error);
+      console.error("Load customers error:", error);
 
       setError(
         error.response?.data?.message ||
@@ -45,10 +49,12 @@ const Customers = () => {
   };
 
   const handleChange = (event) => {
-    setForm({
-      ...form,
-      [event.target.name]: event.target.value,
-    });
+    const { name, value } = event.target;
+
+    setForm((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (event) => {
@@ -57,29 +63,65 @@ const Customers = () => {
     setError("");
     setSuccess("");
 
+    // Frontend validation
+    if (!form.name.trim()) {
+      setError("Customer name is required");
+      return;
+    }
+
+    if (!/^[6-9]\d{9}$/.test(form.phone)) {
+      setError(
+        "Phone number must be a valid 10 digit Indian mobile number"
+      );
+      return;
+    }
+
     try {
-      const response = await createCustomer(form);
+      setSaving(true);
+
+      const customerData = {
+        name: form.name.trim(),
+        phone: form.phone,
+        email: form.email.trim() || null,
+        address: form.address.trim() || null,
+      };
+
+      console.log("Creating customer:", customerData);
+
+      const response = await createCustomer(customerData);
 
       console.log("Created customer:", response);
 
-      setSuccess("Customer created successfully");
+      setSuccess(
+        response.message || "Customer created successfully"
+      );
 
       setForm({
         name: "",
-        mobile: "",
+        phone: "",
         email: "",
+        address: "",
       });
 
       setShowForm(false);
 
       await loadCustomers();
     } catch (error) {
-      console.error(error);
+      console.error("Create customer error:", error);
 
-      setError(
-        error.response?.data?.message ||
-          "Unable to create customer"
-      );
+      const validationErrors = error.response?.data?.data;
+
+      if (validationErrors) {
+        const firstError = Object.values(validationErrors)[0];
+        setError(firstError || "Validation failed");
+      } else {
+        setError(
+          error.response?.data?.message ||
+            "Unable to create customer"
+        );
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -90,6 +132,7 @@ const Customers = () => {
   return (
     <div>
 
+      {/* Header */}
       <div
         style={{
           display: "flex",
@@ -101,12 +144,17 @@ const Customers = () => {
         <h1>Customers</h1>
 
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            setShowForm(!showForm);
+            setError("");
+            setSuccess("");
+          }}
         >
           {showForm ? "Cancel" : "+ Add Customer"}
         </button>
       </div>
 
+      {/* Messages */}
       {error && (
         <div className="error">
           {error}
@@ -119,6 +167,7 @@ const Customers = () => {
         </div>
       )}
 
+      {/* Add Customer Form */}
       {showForm && (
         <div className="dashboard-card">
 
@@ -137,29 +186,39 @@ const Customers = () => {
 
             <input
               type="tel"
-              name="mobile"
-              placeholder="Mobile Number"
-              value={form.mobile}
+              name="phone"
+              placeholder="Phone Number"
+              value={form.phone}
               onChange={handleChange}
+              maxLength="10"
               required
             />
 
             <input
               type="email"
               name="email"
-              placeholder="Email"
+              placeholder="Email (Optional)"
               value={form.email}
               onChange={handleChange}
             />
 
-            <button type="submit">
-              Save Customer
+            <textarea
+              name="address"
+              placeholder="Address (Optional)"
+              value={form.address}
+              onChange={handleChange}
+              rows="3"
+            />
+
+            <button type="submit" disabled={saving}>
+              {saving ? "Saving..." : "Save Customer"}
             </button>
 
           </form>
         </div>
       )}
 
+      {/* Customer List */}
       <div className="dashboard-card">
 
         <h2>Customer List</h2>
@@ -173,8 +232,9 @@ const Customers = () => {
               <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Mobile</th>
+                <th>Phone</th>
                 <th>Email</th>
+                <th>Address</th>
               </tr>
             </thead>
 
@@ -186,9 +246,15 @@ const Customers = () => {
 
                   <td>{customer.name}</td>
 
-                  <td>{customer.mobile}</td>
+                  <td>{customer.phone}</td>
 
-                  <td>{customer.email || "-"}</td>
+                  <td>
+                    {customer.email || "-"}
+                  </td>
+
+                  <td>
+                    {customer.address || "-"}
+                  </td>
 
                 </tr>
               ))}
@@ -204,3 +270,4 @@ const Customers = () => {
 };
 
 export default Customers;
+```
