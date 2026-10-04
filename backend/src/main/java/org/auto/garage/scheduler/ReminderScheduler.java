@@ -1,30 +1,42 @@
 package org.auto.garage.scheduler;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.auto.garage.entity.Vehicle;
 import org.auto.garage.repository.VehicleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-@EnableScheduling
+@RequiredArgsConstructor
+@Slf4j
 public class ReminderScheduler {
 
-    @Autowired
-    private VehicleRepository vehicleRepo;
+    private final VehicleRepository vehicleRepository;
 
     @Scheduled(cron = "0 0 9 * * ?")
     public void sendReminders() {
 
-        List<Vehicle> dueVehicles = vehicleRepo.findDueServices();
 
-        for (Vehicle v : dueVehicles) {
-            System.out.println("Reminder: Service due for " + v.getVehicleNumber());
+        List<Vehicle> dueVehicles =
+                vehicleRepository.findDueServices(java.time.LocalDate.now());
 
-            // Integrate WhatsApp API here
+        if (dueVehicles.isEmpty()) {
+            log.info("No service reminders are due today.");
+            return;
+        }
+
+        for (Vehicle vehicle : dueVehicles) {
+
+            log.info(
+                    "Service reminder due for vehicle: {}",
+                    vehicle.getVehicleNumber()
+            );
+
+            // WhatsApp/email notification integration
+            // will be added in the Notification module.
         }
     }
 }
