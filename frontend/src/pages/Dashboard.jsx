@@ -1,96 +1,51 @@
-import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Box
-} from "@mui/material";
+import { useAuth } from "../context/AuthContext";
 
-const cards = [
-  {
-    title: "Today's Revenue",
-    value: "₹24,500"
-  },
-  {
-    title: "Vehicles Serviced",
-    value: "18"
-  },
-  {
-    title: "Pending Jobs",
-    value: "7"
-  },
-  {
-    title: "Pickup Requests",
-    value: "3"
-  }
-];
+const Dashboard = () => {
+  const { user } = useAuth();
 
-export default function Dashboard() {
   return (
-    <>
-      <Box
-        sx={{
-          height: 280,
-          borderRadius: 4,
-          overflow: "hidden",
-          position: "relative",
-          mb: 4
-        }}
-      >
-        <img
-          src="https://images.unsplash.com/photo-1487754180451-c456f719a1fc"
-          alt="Garage"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover"
-          }}
-        />
+    <div>
+      <h1>Dashboard</h1>
 
-        <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-            background: "rgba(0,0,0,0.55)",
-            color: "white",
-            p: 4
-          }}
-        >
-          <Typography variant="h3" fontWeight="bold">
-            SSD Auto Parts & Garage
-          </Typography>
+      <p>
+        Welcome {user?.username || "User"}
+      </p>
 
-          <Typography variant="h6" mt={2}>
-            Genuine Parts • Oil Change • Pickup & Drop
-          </Typography>
-        </Box>
-      </Box>
+      <div className="dashboard-grid">
 
-      <Grid container spacing={3}>
-        {cards.map((item) => (
-          <Grid item xs={12} md={3} key={item.title}>
-            <Card
-              sx={{
-                borderRadius: 4,
-                boxShadow: 4
-              }}
-            >
-              <CardContent>
-                <Typography color="text.secondary">
-                  {item.title}
-                </Typography>
+        <div className="dashboard-card">
+          <h3>Customers</h3>
+          <p>Manage customers</p>
+        </div>
 
-                <Typography
-                  variant="h4"
-                  fontWeight="bold"
-                >
-                  {item.value}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </>
+        <div className="dashboard-card">
+          <h3>Vehicles</h3>
+          <p>Manage vehicles</p>
+        </div>
+
+        <div className="dashboard-card">
+          <h3>Appointments</h3>
+          <p>Today's appointments</p>
+        </div>
+
+        <div className="dashboard-card">
+          <h3>Services</h3>
+          <p>Garage services</p>
+        </div>
+
+        <div className="dashboard-card">
+          <h3>Invoices</h3>
+          <p>Billing & invoices</p>
+        </div>
+
+        <div className="dashboard-card">
+          <h3>Inventory</h3>
+          <p>Parts inventory</p>
+        </div>
+
+      </div>
+    </div>
   );
-}
+};
+
+export default Dashboard;
