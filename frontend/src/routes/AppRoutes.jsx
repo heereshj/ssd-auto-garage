@@ -4,39 +4,19 @@ import {
   Route,
 } from "react-router-dom";
 
-import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
 import Customers from "../pages/Customers";
 import Vehicles from "../pages/Vehicles";
-
 import Layout from "../components/Layout";
-import ProtectedRoute from "../components/ProtectedRoute";
 
 const AppRoutes = () => {
-
   return (
     <BrowserRouter>
-
       <Routes>
 
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+        <Route path="/" element={<Layout />}>
 
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }
-        >
-
-          <Route
-            index
-            element={<Dashboard />}
-          />
+          <Route index element={<Dashboard />} />
 
           <Route
             path="dashboard"
@@ -56,7 +36,6 @@ const AppRoutes = () => {
         </Route>
 
       </Routes>
-
     </BrowserRouter>
   );
 };
