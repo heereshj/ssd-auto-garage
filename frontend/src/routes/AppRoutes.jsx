@@ -1,3 +1,4 @@
+
 import {
   BrowserRouter,
   Routes,
@@ -7,13 +8,13 @@ import {
 import Dashboard from "../pages/Dashboard";
 import Customers from "../pages/Customers";
 import Vehicles from "../pages/Vehicles";
+import JobCards from "../pages/JobCards";
 import Layout from "../components/Layout";
 
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-
         <Route path="/" element={<Layout />}>
 
           <Route index element={<Dashboard />} />
@@ -33,8 +34,12 @@ const AppRoutes = () => {
             element={<Vehicles />}
           />
 
-        </Route>
+          <Route
+            path="job-cards"
+            element={<JobCards />}
+          />
 
+        </Route>
       </Routes>
     </BrowserRouter>
   );

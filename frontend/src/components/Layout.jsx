@@ -1,8 +1,8 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Layout = () => {
-
   const { logout, user } = useAuth();
   const navigate = useNavigate();
 
@@ -11,45 +11,115 @@ const Layout = () => {
     navigate("/login");
   };
 
+  const getLinkClass = ({ isActive }) =>
+    isActive ? "sidebar-link active" : "sidebar-link";
+
   return (
-    <div className="app">
-
-      <nav className="navbar">
-
-        <div className="logo">
-          SSD Auto Parts & Garage
+    <div className="layout">
+      <aside className="sidebar">
+        <div className="sidebar-brand">
+          <div className="brand-icon">SSD</div>
+          <div>
+            <h2>SSD Garage</h2>
+            <span>Management System</span>
+          </div>
         </div>
 
-        <div className="nav-links">
+        <p className="sidebar-section">MAIN MENU</p>
 
-          <Link to="/dashboard">
+        <nav className="sidebar-nav">
+          <NavLink to="/dashboard" className={getLinkClass}>
+            <span className="nav-icon">▦</span>
             Dashboard
-          </Link>
+          </NavLink>
 
-          <Link to="/customers">
+          <NavLink to="/customers" className={getLinkClass}>
+            <span className="nav-icon">♙</span>
             Customers
-          </Link>
+          </NavLink>
 
-          <Link to="/vehicles">
+          <NavLink to="/vehicles" className={getLinkClass}>
+            <span className="nav-icon">🚗</span>
             Vehicles
-          </Link>
+          </NavLink>
 
-          <span>
-            {user?.username}
-          </span>
+          <NavLink to="/job-cards" className={getLinkClass}>
+            <span className="nav-icon">🛠️</span>
+            Job Cards
+          </NavLink>
+        </nav>
 
-          <button onClick={handleLogout}>
-            Logout
-          </button>
+        <p className="sidebar-section">MANAGEMENT</p>
 
+        <div className="sidebar-nav">
+          <div className="sidebar-link disabled-link">
+            <span className="nav-icon">🔧</span>
+            Services
+            <span className="coming-soon">Soon</span>
+          </div>
+
+          <div className="sidebar-link disabled-link">
+            <span className="nav-icon">📅</span>
+            Appointments
+            <span className="coming-soon">Soon</span>
+          </div>
+
+          <div className="sidebar-link disabled-link">
+            <span className="nav-icon">🧾</span>
+            Invoices
+            <span className="coming-soon">Soon</span>
+          </div>
+
+          <div className="sidebar-link disabled-link">
+            <span className="nav-icon">📦</span>
+            Inventory
+            <span className="coming-soon">Soon</span>
+          </div>
         </div>
 
-      </nav>
+        <div className="sidebar-bottom">
+          <div className="user-profile">
+            <div className="user-avatar">
+              {(user?.username || "U").charAt(0).toUpperCase()}
+            </div>
 
-      <main className="content">
-        <Outlet />
-      </main>
+            <div className="user-details">
+              <strong>{user?.username || "User"}</strong>
+              <span>Garage Admin</span>
+            </div>
+          </div>
 
+          <button className="logout-button" onClick={handleLogout}>
+            ↪ Logout
+          </button>
+        </div>
+      </aside>
+
+      <div className="main">
+        <header className="navbar">
+          <div>
+            <strong>SSD Auto Parts & Garage</strong>
+            <div className="breadcrumb">
+              Business Overview / Dashboard
+            </div>
+          </div>
+
+          <div className="navbar-right">
+            <span className="online-status">
+              <span className="status-dot" />
+              System Online
+            </span>
+
+            <span className="navbar-user">
+              {user?.username || "User"}
+            </span>
+          </div>
+        </header>
+
+        <main className="page">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };

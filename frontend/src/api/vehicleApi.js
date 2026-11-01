@@ -5,16 +5,19 @@ export const getVehicles = async () => {
   return response.data;
 };
 
-export const getVehicleById = async (id) => {
-  const response = await axiosClient.get(`/vehicles/${id}`);
+export const createVehicle = async (vehicle) => {
+  const response = await axiosClient.post("/vehicles", vehicle);
   return response.data;
 };
 
-export const createVehicle = async (vehicle) => {
-  const response = await axiosClient.post(
-    "/vehicles",
-    vehicle
-  );
+export const deleteVehicle = async (id) => {
+  const response = await axiosClient.delete(`/vehicles/${id}`);
+  return response.data;
+};
 
+export const getVehiclesByCustomer = async (customerId) => {
+  const response = await axiosClient.get(
+    `/vehicles/customer/${customerId}`
+  );
   return response.data;
 };

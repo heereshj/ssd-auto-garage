@@ -44,4 +44,7 @@ public class Vehicle {
             foreignKey = @ForeignKey(name = "fk_vehicle_customer")
     )
     private Customer customer;
+    public Customer getCustomer() {
+        return customer;
+    }
 }

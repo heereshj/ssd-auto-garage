@@ -3,6 +3,7 @@ package org.auto.garage.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.auto.garage.common.ApiResponse;
+import org.auto.garage.dto.VehicleResponse;
 import org.auto.garage.entity.Vehicle;
 import org.auto.garage.service.VehicleService;
 import org.springframework.http.HttpStatus;
@@ -19,39 +20,51 @@ public class VehicleController {
     private final VehicleService vehicleService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Vehicle>> create(
+    public ResponseEntity<ApiResponse<VehicleResponse>> create(
             @Valid @RequestBody Vehicle vehicle) {
 
-        Vehicle savedVehicle = vehicleService.save(vehicle);
+        VehicleResponse savedVehicle = vehicleService.save(vehicle);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success(
                         "Vehicle created successfully",
-                        savedVehicle
-                ));
+                        savedVehicle));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Vehicle>>> getAll() {
-
+    public ResponseEntity<ApiResponse<List<VehicleResponse>>> getAll() {
         return ResponseEntity.ok(
                 ApiResponse.success(
                         "Vehicles fetched successfully",
-                        vehicleService.getAll()
-                )
-        );
+                        vehicleService.getAll()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Vehicle>> getById(
+    public ResponseEntity<ApiResponse<VehicleResponse>> getById(
             @PathVariable Long id) {
-
         return ResponseEntity.ok(
                 ApiResponse.success(
                         "Vehicle fetched successfully",
-                        vehicleService.getById(id)
-                )
-        );
+                        vehicleService.getById(id)));
+    }
+
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<ApiResponse<List<VehicleResponse>>> getByCustomer(
+            @PathVariable Long customerId) {
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Customer vehicles fetched successfully",
+                        vehicleService.getByCustomer(customerId)));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> delete(
+            @PathVariable Long id) {
+        vehicleService.delete(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Vehicle deleted successfully",
+                        null));
     }
 }
